@@ -4,7 +4,7 @@
 
 ## Data Tables
 - Groups
-- Groups Members
+- Members
 - Resource Types
 - Schemas
 - Service Provider Config
@@ -13,7 +13,7 @@
 ## Actions
 - User (Create/Update/Delete)
 - Group (Create/Update/Delete
-- Group Member (Add/Remove)
+- Member (Add/Remove)
 
 # NIM Docs
 The official NIM documentation can be found at: https://docs.nimsuite.com
