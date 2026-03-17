@@ -11,58 +11,187 @@
                         "processing_options": {
                             "output_field": "Resources"
                         }
+                    },
+                    "GroupCreate": {
+                        "method": "post",
+                        "semantics": "create",
+                        "call": {
+                            "path": "/Groups"
+                        },
+                        "processing_options": {
+                            "output_field": null
+                        },
+                        "resource_allowance_default": "optional",
+                        "resource_prohibited": [
+                            "id",
+                            "schemas"
+                        ],
+                        "resource_mandatory": [
+                            "displayName"
+                        ]
+                    },
+                    "GroupUpdate": {
+                        "method": "patch",
+                        "semantics": "update",
+                        "scimProtocol": true,
+                        "call": {
+                            "path": "/Groups/{id}"
+                        },
+                        "processing_options": {
+                            "output_field": null
+                        },
+                        "resource_allowance_default": "optional",
+                        "resource_prohibited": [
+                            "schemas"
+                        ],
+                        "resource_mandatory": [
+                            "id"
+                        ]
+                    },
+                    "GroupDelete": {
+                        "method": "delete",
+                        "semantics": "delete",
+                        "call": {
+                            "path": "/Groups/{id}"
+                        },
+                        "processing_options": {
+                            "output_field": "Resources"
+                        },
+                        "resource_allowance_default": "prohibited",
+                        "resource_mandatory": [
+                            "id"
+                        ]
                     }
                 },
-                "key": "externalId",
+                "key": "id",
                 "resources": {
+                    "id": "string*",
                     "schemas": [
                         "string"
                     ],
                     "displayName": "string*",
                     "externalId": "string*",
-                    "members": [
-                        {
-                            "value": "string*",
-                            "$ref": "string*",
-                            "display": "string*"
-                        }
-                    ]
+                    "meta": {
+
+                    }
                 }
             },
-            "EnterpriseUsers": {
+            "Members": {
                 "operations": {
-                    "EnterpriseUsersList": {
+                    "MembersList": {
+                        "method": "get",
+                        "pagination": "none",
+                        "call": {
+                            "mode": "iteration",
+                            "table": "Groups",
+                            "iterator": "id",
+                            "path": "/Users",
+                            "queryParameters": {
+                                "filter": "groups.value eq \"{iterator}\""
+                            },
+                            "base": {
+                                "group_id": "{iterator}"
+                            }
+                        },
+                        "processing_options": {
+                            "output_field": "Resources"
+                        },
+                        "maxSessionCount": 20
+                    },
+                    "MemberAdd": {
+                        "method": "patch",
+                        "semantics": "create",
+                        "call": {
+                            "path": "/Groups/{group_id}"
+                        },
+                        "processing_options": {
+                            "output_field": null
+                        },
+                        "body": {
+                            "_nim_merge_attributes_": false,
+                            "Operations": [{
+                                "op": "add",
+                                "path": "members",
+                                "value": [{ "value": "{id}" }]
+                            }]
+                        },
+                        "resource_mandatory": [
+                            "id",
+                            "group_id"
+                        ]
+                    },
+                    "MemberRemove": {
+                        "method": "patch",
+                        "semantics": "delete",
+                        "call": {
+                            "path": "/Groups/{group_id}"
+                        },
+                        "processing_options": {
+                            "output_field": null
+                        },
+                        "body": {
+                            "_nim_merge_attributes_": false,
+                            "Operations": [{
+                                "op": "remove",
+                                "path": "members",
+                                "value": [{ "value": "{id}" }]
+                            }]
+                        },
+                        "resource_mandatory": [
+                            "id",
+                            "group_id"
+                        ]
+                    }
+                },
+                "groupmembership": {
+                    "add_operation": "MemberAdd",
+                    "remove_operation": "MemberRemove",
+                    "member_table": "Users",
+                    "group_table": "Groups",
+                    "member_attributes": {
+                        "id": "id"
+                    },
+                    "group_attributes": {
+                        "id": "group_id"
+                    }
+                },
+                "key": "group_id",
+                "resources": {
+                    "group_id": "string*",
+                    "id": "string*"
+                }
+            },
+            "ResourceTypes": {
+                "operations": {
+                    "SchemasList": {
                         "method": "get",
                         "call": {
-                            "path": "/EnterpriseUser"
+                            "path": "/ResourceTypes"
                         },
                         "processing_options": {
                             "output_field": "Resources"
                         }
                     }
                 },
-                "key": "userName",
+                "key": "id",
                 "resources": {
                     "schemas": [
-                        "string*"
+                        "string"
                     ],
-                    "userName": "string*",
-                    "name": {
-                        "familyName": "_:string*",
-                        "givenName": "_:string*"
-                    },
-                    "active": "boolean*",
-                    "User:urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
-                        "employeeNumber": "_:string*",
-                        "costCenter": "_:string*",
-                        "organization": "_:string*",
-                        "division": "_:string*",
-                        "department": "_:string*",
-                        "manager": {
-                            "value": "_:string*",
-                            "$ref": "_:string*",
-                            "displayName": "_:string*"
+                    "id": "string*",
+                    "name": "string*",
+                    "endpoint": "string*",
+                    "description": "string*",
+                    "schema": "string*",
+                    "schemaExtensions": [
+                        {
+                        "schema": "string*",
+                        "required": "boolean"
                         }
+                    ],
+                    "meta": {
+                        "resourceType": "_:string",
+                        "location": "_:string"
                     }
                 }
             },
@@ -162,18 +291,14 @@
                             "output_field": "Resources"
                         }
                     },
-                    "UsersCreate": {
+                    "UserCreate": {
                         "method": "post",
                         "semantics": "create",
                         "call": {
                             "path": "/Users"
                         },
                         "processing_options": {
-                            "output_field": "Resources"
-                        },
-                        "body": {
-                            "_nim_merge_attributes_": true,
-                            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"]
+                            "output_field": null
                         },
                         "resource_allowance_default": "optional",
                         "resource_prohibited": [
@@ -183,10 +308,13 @@
                         ],
                         "resource_mandatory": [
                             "userName",
-                            "active"
+                            "active",
+                            "displayName",
+                            "name_givenName",
+                            "name_familyName"
                         ]
                     },
-                    "UsersUpdate": {
+                    "UserUpdate": {
                         "method": "patch",
                         "semantics": "update",
                         "scimProtocol": true,
@@ -195,10 +323,6 @@
                         },
                         "processing_options": {
                             "output_field": "Resources"
-                        },
-                        "body": {
-                            "_nim_merge_attributes_": true,
-                            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"]
                         },
                         "resource_allowance_default": "optional",
                         "resource_prohibited": [
@@ -209,7 +333,7 @@
                             "id"
                         ]
                     },
-                    "UsersDelete": {
+                    "UserDelete": {
                         "method": "delete",
                         "semantics": "delete",
                         "call": {
@@ -324,7 +448,7 @@
             "authentication": "aeries",
             "call_handling": "generic",
             "test_connection": {
-                "url": "/Users?count=1"
+                "url": "/ServiceProviderConfig"
             },
             "accept": "application/json",
             "headers": {
@@ -338,8 +462,10 @@
             {
                 "name": "tenant_id",
                 "type": "textbox",
-                "label": "URL:",
-                "value": ""
+                "label": "SCIM endpoint:",
+                "value": "",
+                "required": true,
+                "order": 0
             }
         ]
     }
